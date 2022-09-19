@@ -14,8 +14,9 @@ use specials::*;
 mod specialn;
 use specialn::*;
 use crate::FIGHTER_MANAGER;
+use crate::switch::*;
 
-/*#[smashline::fighter_frame(agent = FIGHTER_KIND_EFLAME)]
+#[smashline::fighter_frame(agent = FIGHTER_KIND_EFLAME)]
 pub fn eflame(fighter: &mut L2CFighterCommon) {
     unsafe {
         let lua_state = fighter.lua_state_agent;
@@ -25,31 +26,33 @@ pub fn eflame(fighter: &mut L2CFighterCommon) {
         if [*FIGHTER_STATUS_KIND_ATTACK_S3, *FIGHTER_STATUS_KIND_ATTACK_HI3, *FIGHTER_STATUS_KIND_ATTACK_LW3, *FIGHTER_STATUS_KIND_ATTACK_DASH, *FIGHTER_STATUS_KIND_ATTACK_S4, *FIGHTER_STATUS_KIND_ATTACK_HI4, *FIGHTER_STATUS_KIND_ATTACK_LW4].contains(&status)
         || ([*FIGHTER_STATUS_KIND_ATTACK].contains(&status) && MotionModule::motion_kind(module_accessor) == hash40("attack_13")) {
             if AttackModule::is_infliction_status(module_accessor,*COLLISION_KIND_MASK_HIT)
-            && ControlModule::check_button_on(module_accessor,*CONTROL_PAD_BUTTON_SPECIAL) {
-                change_aegis(fighter,status,Type::NORMAL);
+            && ControlModule::check_button_on(module_accessor,*CONTROL_PAD_BUTTON_SPECIAL)
+            && LIST.lock().unwrap().list[entry_id].change == false {
+                let change = Change::new(0,0.0,0.0,0,true,-1,Type::NORMAL);
+                LIST.lock().unwrap().update_list(change,entry_id);
             }
         }
         if status == *FIGHTER_STATUS_KIND_ATTACK_AIR {
             if AttackModule::is_infliction_status(module_accessor,*COLLISION_KIND_MASK_HIT)
-            && ControlModule::check_button_on(module_accessor,*CONTROL_PAD_BUTTON_SPECIAL) {
-                change_aegis(fighter,status,Type::AERIAL);
+            && ControlModule::check_button_on(module_accessor,*CONTROL_PAD_BUTTON_SPECIAL)
+            && LIST.lock().unwrap().list[entry_id].change == false {
+                let change = Change::new(0,0.0,0.0,0,true,-1,Type::AERIAL);
+                LIST.lock().unwrap().update_list(change,entry_id);
             }
         }
-        if status == CURR_STATUS[entry_id] && CHANGE[entry_id] {
-            if MOTION[entry_id] == hash40("none") {
-                MotionModule::set_frame(module_accessor,FRAME[entry_id],false);
-                MotionModule::set_rate(module_accessor,RATE[entry_id]);
+        if LIST.lock().unwrap().list[entry_id].change {
+            let mut box_count = 0;
+            for i in 0..10 {
+                if AttackModule::is_attack(module_accessor,i,false) {
+                    box_count += 1;
+                }
             }
-            else {
-                MotionModule::set_frame(module_accessor,FRAME[entry_id],false);
-                MotionModule::set_rate(module_accessor,RATE[entry_id]);
-                ControlModule::set_attack_air_kind(module_accessor,MOTION[entry_id] as i32);
+            if box_count <= 0 {
+                change_aegis(fighter,status,LIST.lock().unwrap().list[entry_id].type_atk);
             }
-            CHANGE[entry_id] = false;
-            CURR_STATUS[entry_id] = -1;
         }
     }
-}*/
+}
 
 pub fn install() {
     unsafe {
@@ -60,7 +63,7 @@ pub fn install() {
             .as_ptr(),
         );
     }
-    //install_agent_frame!(eflame);
+    install_agent_frame!(eflame);
     install_status_scripts!(
         special_hi_jump_main,
         special_hi_loop_main,
