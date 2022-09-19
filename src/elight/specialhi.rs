@@ -52,6 +52,7 @@ pub unsafe fn special_hi_jump_main(fighter: &mut L2CFighterCommon) -> L2CValue {
 unsafe fn special_hi_jump_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
     let lua_state = fighter.lua_state_agent;
     let module_accessor = sv_system::battle_object_module_accessor(lua_state);
+    let entry_id = WorkModule::get_int(module_accessor,*FIGHTER_INSTANCE_WORK_ID_INT_ENTRY_ID) as usize;
     if fighter.sub_transition_group_check_air_cliff().get_bool() {
         return L2CValue::I32(1)
     }
@@ -66,7 +67,13 @@ unsafe fn special_hi_jump_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue 
             WorkModule::on_flag(module_accessor,*FIGHTER_ELIGHT_STATUS_SPECIAL_HI_FLAG_SPREADBULLET);
         }
     }
-    if ControlModule::check_button_on(module_accessor,*CONTROL_PAD_BUTTON_ATTACK) {
+    if ControlModule::check_button_trigger(module_accessor,*CONTROL_PAD_BUTTON_ATTACK)
+    && LIST.lock().unwrap().list[entry_id].change == false {
+        let change = Change::new(0,0.0,0.0,0,true,-1);
+        LIST.lock().unwrap().update_list(change,entry_id);
+    }
+    if MotionModule::end_frame(module_accessor) - MotionModule::frame(module_accessor) <= 5.0
+    && LIST.lock().unwrap().list[entry_id].change {
         change_aegis(fighter,*FIGHTER_EFLAME_STATUS_KIND_SPECIAL_HI_LOOP,Type::SPECIAL);
     }
     if MotionModule::is_end(module_accessor) {
