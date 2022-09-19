@@ -128,7 +128,7 @@ pub unsafe fn change_aegis(fighter: &mut L2CFighterCommon, status: i32, kind: i3
             LIST.lock().unwrap().update_list(change,entry_id);
         },
         Type::SPECIAL => {
-            let change = Change::new(0,0.0,0.0,status,false,-1);
+            let change = Change::new(0,0.0,0.0,status,true,-1);
             LIST.lock().unwrap().update_list(change,entry_id);
         }
         _ => {},
