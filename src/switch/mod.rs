@@ -18,6 +18,7 @@ lazy_static::lazy_static! {
 pub struct Type;
 
 impl Type {
+    pub const NONE: i32 = -1;
     pub const NORMAL: i32 = 0;
     pub const AERIAL: i32 = 1;
     pub const SPECIAL: i32 = 2;
@@ -34,10 +35,11 @@ pub struct Change {
     pub status: i32,
     pub change: bool,
     pub air_attack: i32,
+    pub type_atk: i32,
 }
 
 impl Change {
-    pub fn new(motion: u64, frame: f32, rate: f32, status: i32, change: bool, air_attack: i32) -> Change {
+    pub fn new(motion: u64, frame: f32, rate: f32, status: i32, change: bool, air_attack: i32, type_atk: i32) -> Change {
         Change {
             motion: motion,
             frame: frame,
@@ -45,6 +47,7 @@ impl Change {
             status: status,
             change: change,
             air_attack: air_attack,
+            type_atk: type_atk,
         }
     }
 }
@@ -120,15 +123,15 @@ pub unsafe fn change_aegis(fighter: &mut L2CFighterCommon, status: i32, kind: i3
     let attack_air = ControlModule::get_attack_air_kind(module_accessor);
     match kind {
         Type::NORMAL => {
-            let change = Change::new(motion,frame,rate,status,true,-1);
+            let change = Change::new(motion,frame,rate,status,true,-1,kind);
             LIST.lock().unwrap().update_list(change,entry_id);
         },
         Type::AERIAL => {
-            let change = Change::new(motion,frame,rate,status,true,attack_air);
+            let change = Change::new(motion,frame,rate,status,true,attack_air,kind);
             LIST.lock().unwrap().update_list(change,entry_id);
         },
         Type::SPECIAL => {
-            let change = Change::new(0,0.0,0.0,status,false,-1);
+            let change = Change::new(0,0.0,0.0,status,false,-1,kind);
             LIST.lock().unwrap().update_list(change,entry_id);
         }
         _ => {},
@@ -139,7 +142,7 @@ pub unsafe fn change_aegis(fighter: &mut L2CFighterCommon, status: i32, kind: i3
 pub fn install() {
     lazy_static::initialize(&LIST);
     for _ in 0..8 {
-        let change = Change::new(0,0.0,0.0,-1,false,-1);
+        let change = Change::new(0,0.0,0.0,-1,false,-1,Type::NONE);
         LIST.lock().unwrap().push_to_list(change);
     }
 }
