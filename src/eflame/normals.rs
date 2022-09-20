@@ -44,15 +44,57 @@ unsafe fn attack_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
 pub unsafe fn attack_s3_main(fighter: &mut L2CFighterCommon) -> L2CValue {
     let lua_state = fighter.lua_state_agent;
     let module_accessor = sv_system::battle_object_module_accessor(lua_state);
-    let entry_id = WorkModule::get_int(module_accessor,*FIGHTER_INSTANCE_WORK_ID_INT_ENTRY_ID) as usize;
-    let instance = &LIST.lock().unwrap().list[entry_id];
-    if instance.change {
-        MotionModule::change_motion(module_accessor,Hash40::new_raw(instance.motion),instance.frame,instance.rate,false,0.0,false,false);
-        fighter.sub_shift_status_main(L2CValue::Ptr(attack_main_loop as *const () as _))
+    fighter.status_AttackS3Common();
+    fighter.sub_shift_status_main(L2CValue::Ptr(attack_s3_main_loop as *const () as _))
+}
+
+unsafe fn attack_s3_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
+    let lua_state = fighter.lua_state_agent;
+    let module_accessor = sv_system::battle_object_module_accessor(lua_state);
+    //fighter.status_AttackS3_Main_param(L2CValue::I32(*FIGHTER_COMBO_KIND_S3));
+    if CancelModule::is_enable_cancel(module_accessor) == false {
+        if StatusModule::is_changing(module_accessor) == false {
+            let mut unk = false;
+            if WorkModule::get_param_int(module_accessor,hash40("s3_combo_max"),0) < ComboModule::count(module_accessor) {
+                unk = true;
+            }
+            else {
+                if WorkModule::is_flag(module_accessor,*FIGHTER_STATUS_ATTACK_FLAG_ENABLE_COMBO_PRECEDE) == false {
+                    unk = true;
+                }
+                else {
+                    unk = !WorkModule::is_flag(module_accessor,*FIGHTER_STATUS_ATTACK_FLAG_ENABLE_COMBO);
+                }
+            }
+            if unk {
+                attack_s3_mtrans_param(fighter);
+            }
+        }
+        else {
+            attack_s3_mtrans_param(fighter);
+        }
+        if fighter.global_table[0x16].get_i32() != *SITUATION_KIND_AIR {
+            if WorkModule::get_int(module_accessor,*FIGHTER_STATUS_WORK_ID_INT_RESERVE_ATTACK_MINI_JUMP_ATTACK_FRAME) > 0 {
+                if StopModule::is_stop(module_accessor) == false {
+                    if fighter.sub_check_button_jump().get_bool() {
+                        //call some table and index it to call MotionAnimcmdModule__call_script_single_impl
+                        WorkModule::set_int64(module_accessor,0,*FIGHTER_STATUS_WORK_ID_INT_RESERVE_LOG_ATTACK_KIND);
+                        fighter.change_status_jump_mini_attack(L2CValue::new_bool(true));
+                        return L2CValue::I32(1)
+                    }
+                }
+            }
+            if WorkModule::get_int(module_accessor,*FIGHTER_STATUS_WORK_ID_INT_RESERVE_ATTACK_MINI_JUMP_ATTACK_FRAME) == 1 {
+                if fighter.global_table[0x8].get_bool() == false {
+                    let kind = WorkModule::get_int64(module_accessor,*FIGHTER_STATUS_WORK_ID_INT_RESERVE_LOG_ATTACK_KIND);
+                    if kind > 0 {
+                        FighterStatusModuleImpl::reset_log_action_info(module_accessor,kind);
+                    }
+                }
+            }
+        }
     }
-    else {
-        fighter.status_AttackS3()
-    }
+    return L2CValue::I32(0)
 }
 
 #[status_script(agent = "eflame", status = FIGHTER_STATUS_KIND_ATTACK_HI3, condition = LUA_SCRIPT_STATUS_FUNC_STATUS_MAIN)]
