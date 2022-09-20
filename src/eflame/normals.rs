@@ -52,7 +52,8 @@ unsafe fn attack_s3_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
     let lua_state = fighter.lua_state_agent;
     let module_accessor = sv_system::battle_object_module_accessor(lua_state);
     //fighter.status_AttackS3_Main_param(L2CValue::I32(*FIGHTER_COMBO_KIND_S3));
-    if CancelModule::is_enable_cancel(module_accessor) == false {
+    if CancelModule::is_enable_cancel(module_accessor) == false
+    || fighter.sub_wait_ground_check_common(L2CValue::new_bool(false)).get_bool() == false {
         if StatusModule::is_changing(module_accessor) == false {
             let mut unk = false;
             if WorkModule::get_param_int(module_accessor,hash40("s3_combo_max"),0) < ComboModule::count(module_accessor) {
@@ -89,9 +90,16 @@ unsafe fn attack_s3_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
                     let kind = WorkModule::get_int64(module_accessor,*FIGHTER_STATUS_WORK_ID_INT_RESERVE_LOG_ATTACK_KIND);
                     if kind > 0 {
                         FighterStatusModuleImpl::reset_log_action_info(module_accessor,kind);
+                        WorkModule::set_int64(module_accessor,0,*FIGHTER_STATUS_WORK_ID_INT_RESERVE_LOG_ATTACK_KIND);
                     }
                 }
             }
+            if MotionModule::is_end(module_accessor) {
+                fighter.change_status(FIGHTER_STATUS_KIND_WAIT.into(),false.into());
+            }
+        }
+        else {
+            fighter.change_status(FIGHTER_STATUS_KIND_FALL.into(),false.into());
         }
     }
     return L2CValue::I32(0)
