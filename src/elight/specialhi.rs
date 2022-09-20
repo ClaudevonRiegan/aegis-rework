@@ -67,13 +67,7 @@ unsafe fn special_hi_jump_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue 
             WorkModule::on_flag(module_accessor,*FIGHTER_ELIGHT_STATUS_SPECIAL_HI_FLAG_SPREADBULLET);
         }
     }
-    if ControlModule::check_button_trigger(module_accessor,*CONTROL_PAD_BUTTON_ATTACK)
-    && LIST.lock().unwrap().list[entry_id].change == false {
-        let change = Change::new(0,0.0,0.0,0,true,-1,Type::SPECIAL);
-        LIST.lock().unwrap().update_list(change,entry_id);
-    }
-    if MotionModule::end_frame(module_accessor) - MotionModule::frame(module_accessor) <= 5.0
-    && LIST.lock().unwrap().list[entry_id].change {
+    if ControlModule::check_button_trigger(module_accessor,*CONTROL_PAD_BUTTON_ATTACK) {
         change_aegis(fighter,*FIGHTER_EFLAME_STATUS_KIND_SPECIAL_HI_LOOP,Type::SPECIAL);
     }
     if MotionModule::is_end(module_accessor) {

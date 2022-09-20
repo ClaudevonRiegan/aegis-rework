@@ -1,0 +1,21 @@
+void __thiscall lua2cpp::L2CFighterCommon::status_AttackLw3_common(L2CFighterCommon *this)
+
+{
+  L2CValue *this_00;
+  L2CValue *pLVar1;
+  L2CValue aLStack80 [16];
+  L2CValue aLStack64 [16];
+  L2CValue aLStack48 [16];
+  
+  lib::L2CValue::L2CValue(aLStack48,true);
+  lib::L2CValue::L2CValue(aLStack64,bind_address_call_sub_attack3_uniq_check);
+  this_00 = (L2CValue *)lib::L2CValue::operator[]((L2CValue *)(this + 0x118),0x9ceb46930);
+  pLVar1 = (L2CValue *)lib::L2CValue::operator[](this_00,0xa18b4d5e5);
+  lib::L2CValue::L2CValue(aLStack80,pLVar1);
+  status_AttackLw3_common_param
+            ((L2CValue)this,(int)register0x00000008 - 0x30,(int)register0x00000008 - 0x40);
+  lib::L2CValue::~L2CValue(aLStack80);
+  lib::L2CValue::~L2CValue(aLStack64);
+  lib::L2CValue::~L2CValue(aLStack48);
+  return;
+}

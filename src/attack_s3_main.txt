@@ -1,0 +1,14 @@
+void lua2cpp::L2CFighterCommon::bind_address_call_status_AttackS3_Main(L2CAgent *param_1)
+
+{
+  L2CValue *in_x8;
+  L2CValue aLStack64 [16];
+  L2CValue aLStack48 [16];
+  
+  lib::L2CValue::L2CValue(aLStack64,FIGHTER_COMBO_KIND_S3);
+  status_AttackS3_Main_param((L2CValue)param_1);
+  lib::L2CValue::~L2CValue(aLStack48);
+  lib::L2CValue::~L2CValue(aLStack64);
+  lib::L2CValue::L2CValue(in_x8,0);
+  return;
+}

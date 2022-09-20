@@ -1,0 +1,249 @@
+void lua2cpp::L2CFighterCommon::status_AttackLw3_common_param
+               (L2CValue param_1,L2CValue param_2,L2CValue param_3)
+
+{
+  byte bVar1;
+  bool bVar2;
+  int iVar3;
+  int iVar4;
+  L2CAgent *this;
+  L2CValue *pLVar5;
+  L2CValue *pLVar6;
+  ulong uVar7;
+  Hash402 HVar8;
+  long lVar9;
+  ulong uVar10;
+  code *pcVar11;
+  L2CValue *pLVar12;
+  L2CValue *in_x3;
+  float fVar13;
+  float fVar14;
+  L2CValue aLStack192 [16];
+  L2CValue aLStack176 [16];
+  L2CValue aLStack160 [16];
+  L2CValue aLStack144 [16];
+  L2CValue aLStack128 [4];
+  L2CValue aLStack112 [16];
+  L2CValue aLStack96 [4];
+  
+  this = (L2CAgent *)(ulong)param_1;
+  lib::L2CValue::L2CValue(aLStack112,false);
+  pLVar12 = (L2CValue *)(this + 200);
+  pLVar5 = (L2CValue *)lib::L2CValue::operator[](pLVar12,10);
+  pLVar6 = (L2CValue *)lib::L2CValue::operator[](pLVar12,9);
+  uVar7 = lib::L2CValue::operator==(pLVar5,pLVar6);
+  if ((uVar7 & 1) == 0) {
+    pLVar5 = (L2CValue *)lib::L2CValue::operator[](pLVar12,10);
+    lib::L2CValue::L2CValue((L2CValue *)aLStack96,FIGHTER_STATUS_KIND_ESCAPE);
+    uVar7 = lib::L2CValue::operator==(pLVar5,aLStack96);
+    lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+    if ((uVar7 & 1) != 0) goto LAB_71000869a8;
+LAB_7100086a48:
+    lib::L2CValue::L2CValue((L2CValue *)aLStack96,true);
+    lib::L2CValue::operator=(aLStack112,aLStack96);
+    lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+  }
+  else {
+LAB_71000869a8:
+    pLVar5 = (L2CValue *)lib::L2CValue::operator[](pLVar12,10);
+    pLVar6 = (L2CValue *)lib::L2CValue::operator[](pLVar12,9);
+    uVar7 = lib::L2CValue::operator==(pLVar5,pLVar6);
+    if ((uVar7 & 1) != 0) {
+      lib::L2CValue::L2CValue((L2CValue *)aLStack128,-1);
+      lib::L2CValue::L2CValue(aLStack144,true);
+      iVar3 = lib::L2CValue::as_integer((L2CValue *)aLStack128);
+      bVar1 = lib::L2CValue::as_bool(aLStack144);
+      bVar1 = app::lua_bind::FighterMotionModuleImpl__is_valid_cancel_frame_impl
+                        (*(BattleObjectModuleAccessor **)(this + 0x40),iVar3,(bool)(bVar1 & 1));
+      lib::L2CValue::L2CValue((L2CValue *)aLStack96,(bool)(bVar1 & 1));
+      bVar2 = lib::L2CValue::operator.cast.to.bool((L2CValue *)aLStack96);
+      lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+      lib::L2CValue::~L2CValue(aLStack144);
+      lib::L2CValue::~L2CValue((L2CValue *)aLStack128);
+      if ((bVar2 & 1U) != 0) goto LAB_7100086a48;
+    }
+  }
+  lib::L2CAgent::clear_lua_stack();
+  HVar8 = app::sv_fighter_util::get_attack_lw3_motion(*(lua_State **)(this + 8));
+  lib::L2CValue::L2CValue((L2CValue *)aLStack96,HVar8);
+  lib::L2CValue::L2CValue((L2CValue *)aLStack128,0);
+  lib::L2CValue::L2CValue(aLStack144,1.0);
+  lib::L2CValue::L2CValue(aLStack160,false);
+  HVar8 = lib::L2CValue::as_hash((L2CValue *)aLStack96);
+  fVar13 = (float)lib::L2CValue::as_number((L2CValue *)aLStack128);
+  fVar14 = (float)lib::L2CValue::as_number(aLStack144);
+  bVar1 = lib::L2CValue::as_bool(aLStack160);
+  app::lua_bind::MotionModule__change_motion_impl
+            (*(BattleObjectModuleAccessor **)(this + 0x40),HVar8,fVar13,fVar14,(bool)(bVar1 & 1),0 .0
+             ,false,false);
+  lib::L2CValue::~L2CValue(aLStack160);
+  lib::L2CValue::~L2CValue(aLStack144);
+  lib::L2CValue::~L2CValue((L2CValue *)aLStack128);
+  lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+  lib::L2CValue::L2CValue((L2CValue *)aLStack96,FIGHTER_STATUS_WORK_ID_INT_RESERVE_LOG_ATTACK_KIND );
+  lVar9 = lib::L2CValue::as_integer(in_x3);
+  iVar3 = lib::L2CValue::as_integer((L2CValue *)aLStack96);
+  app::lua_bind::WorkModule__set_int64_impl
+            (*(BattleObjectModuleAccessor **)(this + 0x40),lVar9,iVar3);
+  lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+  bVar2 = lib::L2CValue::operator.cast.to.bool(aLStack112);
+  if ((bVar2 & 1U) != 0) {
+    lib::L2CValue::L2CValue
+              (aLStack144,_FIGHTER_STATUS_WORK_ID_FLAG_RESERVE_ATTACK_DISABLE_MINI_JUMP_ATTACK);
+    iVar3 = lib::L2CValue::as_integer(aLStack144);
+    bVar1 = app::lua_bind::WorkModule__is_flag_impl
+                      (*(BattleObjectModuleAccessor **)(this + 0x40),iVar3);
+    lib::L2CValue::L2CValue((L2CValue *)aLStack128,(bool)(bVar1 & 1));
+    lib::L2CValue::L2CValue((L2CValue *)aLStack96,false);
+    uVar7 = lib::L2CValue::operator==((L2CValue *)aLStack128,aLStack96);
+    lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+    lib::L2CValue::~L2CValue((L2CValue *)aLStack128);
+    lib::L2CValue::~L2CValue(aLStack144);
+    if ((uVar7 & 1) != 0) {
+      lib::L2CValue::L2CValue(aLStack160,0x6e5ec7051);
+      lib::L2CValue::L2CValue(aLStack176,0x1d5e5c91ca);
+      uVar7 = lib::L2CValue::as_integer(aLStack160);
+      uVar10 = lib::L2CValue::as_integer(aLStack176);
+      iVar3 = app::lua_bind::WorkModule__get_param_int_impl
+                        (*(BattleObjectModuleAccessor **)(this + 0x40),uVar7,uVar10);
+      lib::L2CValue::L2CValue(aLStack144,iVar3);
+      lib::L2CValue::L2CValue((L2CValue *)aLStack96,1);
+      lib::L2CValue::operator+(aLStack144,aLStack96);
+      lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+      lib::L2CValue::L2CValue
+                ((L2CValue *)aLStack96,
+                 FIGHTER_STATUS_WORK_ID_INT_RESERVE_ATTACK_MINI_JUMP_ATTACK_FRAME);
+      iVar3 = lib::L2CValue::as_integer((L2CValue *)aLStack128);
+      iVar4 = lib::L2CValue::as_integer((L2CValue *)aLStack96);
+      app::lua_bind::WorkModule__set_int_impl
+                (*(BattleObjectModuleAccessor **)(this + 0x40),iVar3,iVar4);
+      lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+      lib::L2CValue::~L2CValue((L2CValue *)aLStack128);
+      lib::L2CValue::~L2CValue(aLStack144);
+      lib::L2CValue::~L2CValue(aLStack176);
+      lib::L2CValue::~L2CValue(aLStack160);
+      lib::L2CValue::L2CValue
+                ((L2CValue *)aLStack96,FIGHTER_STATUS_TRANSITION_TERM_ID_CONT_JUMP_SQUAT_BUTTON);
+      iVar3 = lib::L2CValue::as_integer((L2CValue *)aLStack96);
+      app::lua_bind::WorkModule__enable_transition_term_impl
+                (*(BattleObjectModuleAccessor **)(this + 0x40),iVar3);
+      lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+    }
+  }
+  lib::L2CValue::L2CValue
+            (aLStack144,FIGHTER_STATUS_WORK_ID_INT_RESERVE_ATTACK_MINI_JUMP_ATTACK_FRAME);
+  iVar3 = lib::L2CValue::as_integer(aLStack144);
+  iVar3 = app::lua_bind::WorkModule__get_int_impl
+                    (*(BattleObjectModuleAccessor **)(this + 0x40),iVar3);
+  lib::L2CValue::L2CValue((L2CValue *)aLStack128,iVar3);
+  lib::L2CValue::L2CValue((L2CValue *)aLStack96,0);
+  uVar7 = lib::L2CValue::operator==((L2CValue *)aLStack128,aLStack96);
+  lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+  if ((uVar7 & 1) == 0) {
+    lib::L2CValue::L2CValue
+              (aLStack160,_FIGHTER_STATUS_WORK_ID_FLAG_RESERVE_ATTACK_DISABLE_MINI_JUMP_ATTACK);
+    iVar3 = lib::L2CValue::as_integer(aLStack160);
+    bVar1 = app::lua_bind::WorkModule__is_flag_impl
+                      (*(BattleObjectModuleAccessor **)(this + 0x40),iVar3);
+    lib::L2CValue::L2CValue((L2CValue *)aLStack96,(bool)(bVar1 & 1));
+    bVar2 = lib::L2CValue::operator.cast.to.bool((L2CValue *)aLStack96);
+    lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+    lib::L2CValue::~L2CValue(aLStack160);
+    lib::L2CValue::~L2CValue((L2CValue *)aLStack128);
+    lib::L2CValue::~L2CValue(aLStack144);
+    if ((bVar2 & 1U) != 0) goto LAB_7100086d8c;
+  }
+  else {
+    lib::L2CValue::~L2CValue((L2CValue *)aLStack128);
+    lib::L2CValue::~L2CValue(aLStack144);
+LAB_7100086d8c:
+    lib::L2CValue::L2CValue(aLStack144,FIGHTER_STATUS_WORK_ID_INT_RESERVE_LOG_ATTACK_KIND);
+    iVar3 = lib::L2CValue::as_integer(aLStack144);
+    lVar9 = app::lua_bind::WorkModule__get_int64_impl
+                      (*(BattleObjectModuleAccessor **)(this + 0x40),iVar3);
+    lib::L2CValue::L2CValue((L2CValue *)aLStack128,lVar9);
+    lib::L2CValue::L2CValue((L2CValue *)aLStack96,0);
+    uVar7 = lib::L2CValue::operator<((L2CValue *)aLStack96,aLStack128);
+    lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+    lib::L2CValue::~L2CValue((L2CValue *)aLStack128);
+    lib::L2CValue::~L2CValue(aLStack144);
+    if ((uVar7 & 1) != 0) {
+      lib::L2CValue::L2CValue
+                ((L2CValue *)aLStack128,FIGHTER_STATUS_WORK_ID_INT_RESERVE_LOG_ATTACK_KIND);
+      iVar3 = lib::L2CValue::as_integer((L2CValue *)aLStack128);
+      lVar9 = app::lua_bind::WorkModule__get_int64_impl
+                        (*(BattleObjectModuleAccessor **)(this + 0x40),iVar3);
+      lib::L2CValue::L2CValue((L2CValue *)aLStack96,lVar9);
+      uVar7 = lib::L2CValue::as_integer((L2CValue *)aLStack96);
+      app::lua_bind::FighterStatusModuleImpl__reset_log_action_info_impl
+                (*(BattleObjectModuleAccessor **)(this + 0x40),uVar7);
+      lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+      lib::L2CValue::~L2CValue((L2CValue *)aLStack128);
+      lib::L2CValue::L2CValue((L2CValue *)aLStack96,0);
+      lib::L2CValue::L2CValue
+                ((L2CValue *)aLStack128,FIGHTER_STATUS_WORK_ID_INT_RESERVE_LOG_ATTACK_KIND);
+      lVar9 = lib::L2CValue::as_integer((L2CValue *)aLStack96);
+      iVar3 = lib::L2CValue::as_integer((L2CValue *)aLStack128);
+      app::lua_bind::WorkModule__set_int64_impl
+                (*(BattleObjectModuleAccessor **)(this + 0x40),lVar9,iVar3);
+      lib::L2CValue::~L2CValue((L2CValue *)aLStack128);
+      lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+    }
+  }
+  lib::L2CValue::L2CValue((L2CValue *)aLStack96,FIGHTER_STATUS_TRANSITION_TERM_ID_CONT_SQUAT);
+  iVar3 = lib::L2CValue::as_integer((L2CValue *)aLStack96);
+  app::lua_bind::WorkModule__unable_transition_term_group_ex_impl
+            (*(BattleObjectModuleAccessor **)(this + 0x40),iVar3);
+  lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+  lib::L2CValue::L2CValue((L2CValue *)aLStack96,FIGHTER_STATUS_TRANSITION_TERM_ID_CONT_TURN);
+  iVar3 = lib::L2CValue::as_integer((L2CValue *)aLStack96);
+  app::lua_bind::WorkModule__unable_transition_term_group_ex_impl
+            (*(BattleObjectModuleAccessor **)(this + 0x40),iVar3);
+  lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+  iVar3 = app::lua_bind::ControlModule__get_attack_lw3_fb_kind_impl
+                    (*(BattleObjectModuleAccessor **)(this + 0x40));
+  lib::L2CValue::L2CValue((L2CValue *)aLStack128,iVar3);
+  lib::L2CValue::L2CValue((L2CValue *)aLStack96,_FIGHTER_COMMAND_ATTACK3_KIND_B);
+  uVar7 = lib::L2CValue::operator==((L2CValue *)aLStack128,aLStack96);
+  lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+  if ((uVar7 & 1) == 0) {
+    pLVar6 = aLStack128;
+  }
+  else {
+    bVar2 = lib::L2CValue::operator.cast.to.bool((L2CValue *)(ulong)param_2);
+    lib::L2CValue::~L2CValue((L2CValue *)aLStack128);
+    if ((bVar2 & 1U) == 0) goto LAB_7100086f9c;
+    app::lua_bind::PostureModule__reverse_lr_impl(*(BattleObjectModuleAccessor **)(this + 0x40));
+    app::lua_bind::PostureModule__update_rot_y_lr_impl
+              (*(BattleObjectModuleAccessor **)(this + 0x40));
+    lib::L2CValue::L2CValue((L2CValue *)aLStack96,FIGHTER_KINETIC_ENERGY_ID_MOTION);
+    fVar13 = (float)app::lua_bind::PostureModule__lr_impl
+                              (*(BattleObjectModuleAccessor **)(this + 0x40));
+    lib::L2CValue::L2CValue((L2CValue *)aLStack128,fVar13);
+    lib::L2CAgent::clear_lua_stack();
+    lib::L2CAgent::push_lua_stack(this,aLStack96);
+    lib::L2CAgent::push_lua_stack(this,aLStack128);
+    app::sv_kinetic_energy::set_chara_dir(*(lua_State **)(this + 8));
+    lib::L2CValue::~L2CValue((L2CValue *)aLStack128);
+    pLVar6 = aLStack96;
+  }
+  lib::L2CValue::~L2CValue((L2CValue *)pLVar6);
+LAB_7100086f9c:
+  bVar1 = app::lua_bind::StopModule__is_stop_impl(*(BattleObjectModuleAccessor **)(this + 0x40));
+  lib::L2CValue::L2CValue((L2CValue *)aLStack128,(bool)(bVar1 & 1));
+  lib::L2CValue::L2CValue((L2CValue *)aLStack96,false);
+  uVar7 = lib::L2CValue::operator==((L2CValue *)aLStack128,aLStack96);
+  lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+  lib::L2CValue::~L2CValue((L2CValue *)aLStack128);
+  if ((uVar7 & 1) != 0) {
+    pcVar11 = (code *)lib::L2CValue::as_pointer((L2CValue *)(L2CValue *)(ulong)param_3);
+    lib::L2CValue::L2CValue((L2CValue *)aLStack96,false);
+    (*pcVar11)(this,aLStack96);
+    lib::L2CValue::~L2CValue((L2CValue *)aLStack96);
+    lib::L2CValue::~L2CValue(aLStack192);
+  }
+  pLVar12 = (L2CValue *)lib::L2CValue::operator[](pLVar12,0x15);
+  lib::L2CValue::operator=(pLVar12,(L2CValue *)(ulong)param_3);
+  lib::L2CValue::~L2CValue(aLStack112);
+  return;
+}

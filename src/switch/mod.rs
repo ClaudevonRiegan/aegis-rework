@@ -11,6 +11,8 @@ use crate::FIGHTER_MANAGER;
 use lazy_static::lazy_static;
 use std::sync::Mutex;
 
+pub static mut CHANGE: [bool; 8] = [false; 8];
+
 lazy_static::lazy_static! {
     pub static ref LIST: Mutex<List> = Mutex::new(List::new());
 }
@@ -113,7 +115,7 @@ pub unsafe fn element_special_lw_main(fighter: &mut L2CFighterCommon) {
     fighter.change_status(FIGHTER_ELEMENT_STATUS_KIND_SPECIAL_LW_STANDBY.into(),false.into());
 }
 
-pub unsafe fn change_aegis(fighter: &mut L2CFighterCommon, status: i32, kind: i32) {
+pub unsafe fn change_aegis(fighter: &mut L2CFighterCommon, status: i32, mut kind: i32) {
     let lua_state = fighter.lua_state_agent;
     let module_accessor = smash::app::sv_system::battle_object_module_accessor(lua_state);
     let entry_id = WorkModule::get_int(module_accessor,*FIGHTER_INSTANCE_WORK_ID_INT_ENTRY_ID) as usize;
@@ -121,6 +123,15 @@ pub unsafe fn change_aegis(fighter: &mut L2CFighterCommon, status: i32, kind: i3
     let frame = MotionModule::frame(module_accessor);
     let rate = MotionModule::rate(module_accessor);
     let attack_air = ControlModule::get_attack_air_kind(module_accessor);
+    CHANGE[entry_id] = false;
+    if kind == Type::NONE {
+        if status == *FIGHTER_STATUS_KIND_ATTACK_AIR {
+            kind = Type::AERIAL;
+        }
+        else {
+            kind = Type::NORMAL;
+        }
+    }
     match kind {
         Type::NORMAL => {
             let change = Change::new(motion,frame,rate,status,true,-1,kind);

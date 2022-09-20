@@ -1,0 +1,11 @@
+void __thiscall lua2cpp::L2CFighterCommon::status_AttackLw3(L2CFighterCommon *this)
+
+{
+  L2CValue aLStack48 [16];
+  
+  status_AttackLw3_common();
+  lib::L2CValue::L2CValue(aLStack48,bind_address_call_status_AttackLw3_Main);
+  sub_shift_status_main((L2CValue)this);
+  lib::L2CValue::~L2CValue(aLStack48);
+  return;
+}

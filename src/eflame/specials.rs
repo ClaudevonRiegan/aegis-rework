@@ -27,6 +27,7 @@ pub unsafe fn special_s_main(fighter: &mut L2CFighterCommon) -> L2CValue {
 unsafe fn special_s_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
     let lua_state = fighter.lua_state_agent;
     let module_accessor = sv_system::battle_object_module_accessor(lua_state);
+    let entry_id = WorkModule::get_int(module_accessor,*FIGHTER_INSTANCE_WORK_ID_INT_ENTRY_ID) as usize;
     if CancelModule::is_enable_cancel(module_accessor) == false
     || (fighter.sub_wait_ground_check_common(L2CValue::new_bool(false)).get_bool() == false
     && fighter.sub_air_check_fall_common().get_bool() == false) {
@@ -36,6 +37,10 @@ unsafe fn special_s_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
         }
         else {
             fighter.sub_change_motion_by_situation(L2CValue::new_int(hash40("special_s_flick")),L2CValue::new_int(hash40("special_air_s_flick")),L2CValue::new_bool(true));
+        }
+        if ControlModule::check_button_trigger(module_accessor,*CONTROL_PAD_BUTTON_ATTACK)
+        && [hash40("fly_l"),hash40("fly_r"),hash40("fly_flick_l"),hash40("fly_flick_r")].contains(&ArticleModule::motion_kind(module_accessor,*FIGHTER_EFLAME_GENERATE_ARTICLE_ESWORD,ArticleOperationTarget(*ARTICLE_OPE_TARGET_ALL))) {
+            change_aegis(fighter,*FIGHTER_ELIGHT_STATUS_KIND_SPECIAL_S_FORWARD,Type::NORMAL);
         }
         if MotionModule::is_end(module_accessor) {
             if fighter.global_table[0x16].get_i32() != *SITUATION_KIND_GROUND {

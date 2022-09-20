@@ -67,15 +67,11 @@ unsafe fn special_hi_jump_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue 
             WorkModule::off_flag(module_accessor,*FIGHTER_EFLAME_STATUS_SPECIAL_HI_FLAG_END_CONTROL);
             KineticModule::unable_energy(module_accessor,*FIGHTER_KINETIC_ENERGY_ID_CONTROL);
         }
-        if ControlModule::check_button_trigger(module_accessor,*CONTROL_PAD_BUTTON_ATTACK)
-        && LIST.lock().unwrap().list[entry_id].change == false {
-            let change = Change::new(0,0.0,0.0,0,true,-1,Type::SPECIAL);
-            LIST.lock().unwrap().update_list(change,entry_id);
+        if ControlModule::check_button_on_trriger(module_accessor,*CONTROL_PAD_BUTTON_ATTACK) {
+            change_aegis(fighter,*FIGHTER_ELIGHT_STATUS_KIND_SPECIAL_HI_ATTACK2,Type::SPECIAL);
         }
-        if MotionModule::end_frame(module_accessor) - MotionModule::frame(module_accessor) <= 5.0
-        && LIST.lock().unwrap().list[entry_id].change {
+        else if ControlModule::check_button_on(module_accessor,*CONTROL_PAD_BUTTON_ATTACK) {
             change_aegis(fighter,*FIGHTER_ELIGHT_STATUS_KIND_SPECIAL_HI_ATTACK1,Type::SPECIAL);
-            return L2CValue::I32(1)
         }
     }
     else {

@@ -9,6 +9,7 @@ use smash_script::lua_args;
 use smashline::*;
 use crate::FIGHTER_MANAGER;
 use crate::elight::*;
+use crate::switch::*;
 
 #[status_script(agent = "elight", status = FIGHTER_STATUS_KIND_SPECIAL_S, condition = LUA_SCRIPT_STATUS_FUNC_STATUS_MAIN)]
 pub unsafe fn special_s_main(fighter: &mut L2CFighterCommon) -> L2CValue {
@@ -47,6 +48,7 @@ unsafe fn special_s_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
 pub unsafe fn special_s_forward_main(fighter: &mut L2CFighterCommon) -> L2CValue {
     let lua_state = fighter.lua_state_agent;
     let module_accessor = sv_system::battle_object_module_accessor(lua_state);
+    let entry_id = WorkModule::get_int(module_accessor,*FIGHTER_INSTANCE_WORK_ID_INT_ENTRY_ID) as usize;
     WorkModule::off_flag(module_accessor,*FIGHTER_ELIGHT_STATUS_SPECIAL_S_FLAG_IS_CHECK_CLIFF);
     WorkModule::off_flag(module_accessor,*FIGHTER_ELIGHT_STATUS_SPECIAL_S_FLAG_IS_NEAR_CLIFF);
     if fighter.global_table[0x16].get_i32() == *SITUATION_KIND_GROUND {
@@ -95,11 +97,17 @@ pub unsafe fn special_s_forward_main(fighter: &mut L2CFighterCommon) -> L2CValue
 unsafe fn special_s_forward_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
     let lua_state = fighter.lua_state_agent;
     let module_accessor = sv_system::battle_object_module_accessor(lua_state);
+    let entry_id = WorkModule::get_int(module_accessor,*FIGHTER_INSTANCE_WORK_ID_INT_ENTRY_ID) as usize;
     if (CancelModule::is_enable_cancel(module_accessor) == false
     || (fighter.sub_wait_ground_check_common(L2CValue::new_bool(false)).get_bool() == false
     && fighter.sub_air_check_fall_common().get_bool()))
     && fighter.sub_transition_group_check_air_cliff().get_bool() == false {
         if MotionModule::is_end(module_accessor) == false {
+            if LIST.lock().unwrap().list[entry_id].change {
+                MotionModule::set_frame(module_accessor,18.0,false);
+                let change = Change::new(0,0.0,0.0,-1,false,-1,Type::NONE);
+                LIST.lock().unwrap().update_list(change,entry_id);
+            }
             let ground_cliff_stop_frame = WorkModule::get_param_int(module_accessor,hash40("param_special_s"),hash40("ground_cliff_stop_frame")) as f32;
             if fighter.global_table[0xe].get_f32() >= ground_cliff_stop_frame {
                 let is_near_cliff_threshold = WorkModule::get_param_float(module_accessor,hash40("param_special_s"),hash40("is_near_cliff_threshold"));
@@ -136,6 +144,10 @@ unsafe fn special_s_forward_main_loop(fighter: &mut L2CFighterCommon) -> L2CValu
                     }
                     fighter.sub_set_ground_correct_by_situation(L2CValue::new_bool(true));
                 }
+            }
+            if fighter.global_table[0xe].get_f32() < 18.0
+            && ControlModule::check_button_trigger(module_accessor,*CONTROL_PAD_BUTTON_ATTACK) {
+                change_aegis(fighter,*FIGHTER_STATUS_KIND_SPECIAL_S,Type::SPECIAL);
             }
         }
         else {

@@ -5,6 +5,8 @@ use smash::app::lua_bind::*;
 use smashline::*;
 use skyline::nn::ro::LookupSymbol;
 
+mod normals;
+use normals::*;
 mod speciallw;
 use speciallw::*;
 mod specialhi;
@@ -27,20 +29,18 @@ pub fn eflame(fighter: &mut L2CFighterCommon) {
         || ([*FIGHTER_STATUS_KIND_ATTACK].contains(&status) && MotionModule::motion_kind(module_accessor) == hash40("attack_13")) {
             if AttackModule::is_infliction_status(module_accessor,*COLLISION_KIND_MASK_HIT)
             && ControlModule::check_button_on(module_accessor,*CONTROL_PAD_BUTTON_SPECIAL)
-            && LIST.lock().unwrap().list[entry_id].change == false {
-                let change = Change::new(0,0.0,0.0,0,true,-1,Type::NORMAL);
-                LIST.lock().unwrap().update_list(change,entry_id);
+            && CHANGE[entry_id] == false {
+                CHANGE[entry_id] = true;
             }
         }
         if status == *FIGHTER_STATUS_KIND_ATTACK_AIR {
             if AttackModule::is_infliction_status(module_accessor,*COLLISION_KIND_MASK_HIT)
             && ControlModule::check_button_on(module_accessor,*CONTROL_PAD_BUTTON_SPECIAL)
-            && LIST.lock().unwrap().list[entry_id].change == false {
-                let change = Change::new(0,0.0,0.0,0,true,-1,Type::AERIAL);
-                LIST.lock().unwrap().update_list(change,entry_id);
+            && CHANGE[entry_id] == false {
+                CHANGE[entry_id] = true;
             }
         }
-        if LIST.lock().unwrap().list[entry_id].change {
+        if CHANGE[entry_id] {
             let mut box_count = 0;
             for i in 0..10 {
                 if AttackModule::is_attack(module_accessor,i,false) {
@@ -48,7 +48,7 @@ pub fn eflame(fighter: &mut L2CFighterCommon) {
                 }
             }
             if box_count <= 0 {
-                change_aegis(fighter,status,LIST.lock().unwrap().list[entry_id].type_atk);
+                change_aegis(fighter,status,Type::NONE);
             }
         }
     }
@@ -65,10 +65,19 @@ pub fn install() {
     }
     install_agent_frame!(eflame);
     install_status_scripts!(
+        attack_main,
+        attack_s3_main,
+        attack_hi3_main,
+        attack_lw3_main,
+        attack_s4_main,
+        attack_hi4_main,
+        attack_lw4_main,
+        attack_air_main,
         special_hi_jump_main,
         special_hi_loop_main,
         special_lw_out,
         special_s_main,
         special_n_attack_main,
+        special_n_hold_main,
     );
 }

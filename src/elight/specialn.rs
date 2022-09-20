@@ -9,6 +9,7 @@ use smash_script::lua_args;
 use smashline::*;
 use crate::FIGHTER_MANAGER;
 use crate::elight::*;
+use crate::switch::*;
 
 unsafe fn special_n_kinetics_setup(fighter: &mut L2CFighterCommon) {
     let lua_state = fighter.lua_state_agent;
@@ -161,6 +162,9 @@ unsafe fn special_n_hold_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
     let module_accessor = sv_system::battle_object_module_accessor(lua_state);
     if MotionModule::is_end(module_accessor) == false {
         if ControlModule::check_button_on(module_accessor,*CONTROL_PAD_BUTTON_SPECIAL) {
+            if ControlModule::check_button_trigger(module_accessor,*CONTROL_PAD_BUTTON_ATTACK) {
+                change_aegis(fighter,*FIGHTER_EFLAME_STATUS_KIND_SPECIAL_N_ATTACK,Type::NORMAL);
+            }
             fighter.sub_change_motion_by_situation(L2CValue::new_int(hash40("special_n_hold")),L2CValue::new_int(hash40("special_air_n_hold")),L2CValue::new_bool(true));
             special_n_kinetics_setup(fighter);
             WorkModule::count_down_int(module_accessor,*FIGHTER_ELIGHT_STATUS_SPECIAL_N_INT_VOICE_PLAY_FRAME,0);
@@ -175,7 +179,13 @@ unsafe fn special_n_hold_main_loop(fighter: &mut L2CFighterCommon) -> L2CValue {
 pub unsafe fn special_n_end_main(fighter: &mut L2CFighterCommon) -> L2CValue {
     let lua_state = fighter.lua_state_agent;
     let module_accessor = sv_system::battle_object_module_accessor(lua_state);
-    let held_frames = WorkModule::get_int(module_accessor,*FIGHTER_ELIGHT_STATUS_SPECIAL_N_INT_HOLD_FRAME) as f32;
+    let entry_id = WorkModule::get_int(module_accessor,*FIGHTER_INSTANCE_WORK_ID_INT_ENTRY_ID) as usize;
+    let mut held_frames = WorkModule::get_int(module_accessor,*FIGHTER_ELIGHT_STATUS_SPECIAL_N_INT_HOLD_FRAME) as f32;
+    if LIST.lock().unwrap().list[entry_id].change {
+        held_frames = LIST.lock().unwrap().list[entry_id].frame * 1.5;
+        let change = Change::new(0,0.0,0.0,-1,false,-1,Type::NONE);
+        LIST.lock().unwrap().update_list(change,entry_id);
+    }
     let charge_frame = WorkModule::get_param_int(module_accessor,hash40("param_special_n"),hash40("charge_frame")) as f32;
     let attack_charge_max_mul = WorkModule::get_param_float(module_accessor,hash40("param_special_n"),hash40("attack_charge_max_mul"));
     let attack_ratio = (held_frames/charge_frame).clamp(0.0,1.0) + 0.0;
